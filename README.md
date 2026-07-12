@@ -120,45 +120,6 @@ points at whatever Gemini currently designates as its recommended flash model, s
 working as Google retires dated snapshots (see [Troubleshooting](#troubleshooting)). The
 system prompt and field-mapping strategy live in `backend/src/prompts/crmPrompt.ts`.
 
-## Repository layout
-
-```
-groweasy-csv-importer/
-├── backend/
-│   ├── src/
-│   │   ├── controllers/importController.ts   # request handling, job lifecycle
-│   │   ├── routes/importRoutes.ts             # /api/health, /api/import[/:jobId]
-│   │   ├── services/csvParser.ts              # header-agnostic CSV parsing
-│   │   ├── services/aiService.ts              # Gemini API wrapper
-│   │   ├── services/batchProcessor.ts         # batching, concurrency, retries
-│   │   ├── services/jobStore.ts               # in-memory job status (TTL'd)
-│   │   ├── prompts/crmPrompt.ts               # the AI prompt engineering
-│   │   ├── utils/validators.ts                # post-AI validation/sanitization
-│   │   ├── middleware/upload.ts               # multer config (type/size limits)
-│   │   ├── middleware/errorHandler.ts         # centralized error handling
-│   │   ├── types/index.ts                     # shared types + CRM schema
-│   │   ├── __tests__/                         # Jest unit tests
-│   │   └── server.ts                          # app entry point
-│   ├── Dockerfile
-│   └── .env.example
-└── frontend/
-    ├── app/page.tsx                            # main flow orchestration
-    ├── app/layout.tsx                           # fonts, metadata, theme init, toaster
-    ├── components/UploadBox.tsx                 # drag & drop upload
-    ├── components/Sidebar.tsx                   # desktop nav + pipeline + theme toggle
-    ├── components/ThemeToggle.tsx               # light/dark switch, persisted
-    ├── components/CSVPreviewTable.tsx           # step 2: raw preview
-    ├── components/DataTable.tsx                 # virtualized generic table
-    ├── components/CRMTable.tsx                  # step 4: parsed CRM records
-    ├── components/SkippedTable.tsx              # step 4: skipped rows + reasons
-    ├── components/ImportSummary.tsx             # stat cards
-    ├── components/LoadingOverlay.tsx            # staged progress UI
-    ├── components/PipelineStepper.tsx            # Extract/Transform/Load rail
-    ├── services/api.ts                          # backend API client + polling
-    ├── utils/csvExport.ts                       # download parsed CSV
-    └── types/index.ts                           # shared types
-```
-
 ## Getting started
 
 ### Prerequisites
@@ -311,34 +272,6 @@ re-checks every field the model returns:
 | `NEXT_PUBLIC_API_BASE_URL` | `http://localhost:4000` | Where the frontend sends `/api/*` requests. |
 | `NEXT_PUBLIC_MAX_FILE_SIZE_MB` | `15` | Client-side dropzone rejection threshold. **Must match the backend's `MAX_FILE_SIZE_MB`** — raising one without the other means either a confusing client-side rejection of files the server would accept, or an upload that the client allows but the server then rejects.
 
-## Troubleshooting
-
-**`AI batch failed after 3 attempts: [GoogleGenerativeAI Error]: Error fetch...`**
-This looks like a network error but often isn't. Google periodically retires dated model
-snapshots for newer API keys/projects — the actual underlying error (visible if you call
-the API directly) is usually `404: This model models/gemini-2.5-flash is no longer
-available to new users`, which the SDK sometimes surfaces tersely. Fix: set `AI_MODEL` to
-`gemini-flash-latest` (the default here) instead of a dated snapshot like
-`gemini-2.5-flash` — it's an alias Google keeps pointed at their current recommended flash
-model, so it doesn't break the next time a snapshot is sunset. If it persists, confirm
-`GEMINI_API_KEY` is set and valid, and that outbound HTTPS to
-`generativelanguage.googleapis.com` isn't blocked by a firewall/proxy.
-
-**Upload rejected with "Only .csv files are supported."**
-The file isn't a `.csv` — most commonly a native `.xlsx`/`.xls` that needs to be exported
-or "Saved As" CSV first (see [Supported inputs & limits](#supported-inputs--limits)).
-
-**Upload rejected for size before it even reaches the server.**
-The frontend dropzone enforces `NEXT_PUBLIC_MAX_FILE_SIZE_MB` client-side. Raise it (and
-the backend's `MAX_FILE_SIZE_MB` to match) if you need larger files.
-
-**CORS errors in the browser console.**
-`FRONTEND_ORIGIN` on the backend doesn't include the origin the frontend is actually
-served from. It's a comma-separated list — add the missing origin and restart the backend.
-
-**Polling `GET /api/import/:jobId` returns 404.**
-Jobs live in memory for 1 hour, then are garbage-collected — this also means jobs don't
-survive a backend restart or run across multiple backend instances (no shared store).
 
 ## Assumptions & known limitations
 
@@ -363,8 +296,3 @@ survive a backend restart or run across multiple backend instances (no shared st
   store), enabling multi-instance deployments.
 - Native `.xlsx`/`.xls` support so users don't need to pre-export to CSV.
 
-## Submission
-
-- Position applied for: **`<Intern / Full-Time>`**
-- Public app: `<link>`
-- Public repo: `<link>`
