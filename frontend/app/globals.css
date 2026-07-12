@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-canvas text-graphite-800 font-body antialiased transition-colors duration-200 dark:bg-graphite-900 dark:text-graphite-100;
+  }
+  ::selection {
+    @apply bg-teal-200 text-graphite-900 dark:bg-teal-700 dark:text-white;
+  }
+  :focus-visible {
+    outline: 2px solid #0f7b6c;
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #cbd0c6;
+    border-radius: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: #a4aca0;
+  }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #3a4640;
+  }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: #586359;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

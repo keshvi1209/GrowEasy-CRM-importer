@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+      - FRONTEND_ORIGIN=http://localhost:3000
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - AI_MODEL=gemini-flash-latest
+      - BATCH_SIZE=100
+      - AI_CONCURRENCY=6
+      - MAX_RETRIES=3
