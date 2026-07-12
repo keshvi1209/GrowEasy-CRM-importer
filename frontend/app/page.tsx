@@ -106,7 +106,7 @@ export default function HomePage() {
           <ThemeToggle />
         </div>
 
-        <div className="w-full px-4 py-8 sm:px-8 sm:py-12 lg:px-16">
+        <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-8 sm:py-12 lg:px-12">
           {/* Header */}
           <header className="mb-8 flex flex-col gap-4 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
             <div>
